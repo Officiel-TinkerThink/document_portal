@@ -54,3 +54,19 @@ git clone <repo_url>
 2. Embedding model ## openai, hf, gemini
 
 3. vector database ##inmemory  #ondisk  ##cloudbased
+
+
+## GROQ API KEY LINK
+'''
+https://console.groq.com/keys
+
+### MODEL DOCS
+https://console.groq.com/docs/overview
+'''
+
+## GOOGLE API KEY LINK
+'''
+https://aistudio.google.com/apikey
+
+https://ai.google.dev/gemini-api/docs/model
+'''
