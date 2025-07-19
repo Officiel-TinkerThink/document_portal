@@ -41,3 +41,10 @@ git add .
 '''
 git commit -m "<write your commit message>"
 '''
+
+# for clone the repo
+
+'''
+git clone <repo_url>
+'''
+
