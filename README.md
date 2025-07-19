@@ -48,3 +48,9 @@ git commit -m "<write your commit message>"
 git clone <repo_url>
 '''
 
+### minimum requirement for this project
+1. LLM Model ##groq(freely), openai(paid), gemini(15 days free access), claude (paid), huggingface(freely), ollama(local setup)
+
+2. Embedding model ## openai, hf, gemini
+
+3. vector database ##inmemory  #ondisk  ##cloudbased
