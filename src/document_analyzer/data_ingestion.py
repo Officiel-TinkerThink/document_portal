@@ -65,12 +65,12 @@ if __name__ == "__main__":
     from pathlib import Path
     from io import BytesIO
 
-    pdf_path = r"\\data\\document_analysis\\sample.pdf"
+    pdf_path = r"D:\\WORK\\LLM_learning_resources\\krish_naik_bootcamp\\lecture\\project_structure\\document_portal\\data\\document_analysis\\sample.pdf"
 
     class DummyFile:
         def __init__(self, file_path):
-            self.name = Path(os.getcwd() + file_path).name
-            self._file_path = os.getcwd() + file_path
+            self.name = Path(file_path).name
+            self._file_path = file_path
 
         def getbuffer(self):
             return open(self._file_path, "rb").read()

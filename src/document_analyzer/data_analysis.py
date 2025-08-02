@@ -7,7 +7,7 @@ from utils.model_loader import ModelLoader
 from logger.custom_logger import CustomLogger
 from exception.custom_exception import DocumentPortalException
 from model.models import *
-from prompt.prompt_library import *
+from prompt.prompt_library import PROMPT_REGISTRY
 
 
 class DocumentAnalyzer:
@@ -26,19 +26,28 @@ class DocumentAnalyzer:
             self.parser = JsonOutputParser(pydantic_object=Metadata)
             self.fixing_parser = OutputFixingParser.from_llm(parser=self.parser, llm=self.llm)
 
-            self.prompt = prompt
+            self.prompt = PROMPT_REGISTRY["document_analysis"]
 
             self.log.info("DocumentAnalyzer initialized successfully")
-
         except Exception as e:
             self.log.error("Failed to initialize DocumentAnalyzer: {e}")
             raise DocumentPortalException("Failed to initialize DocumentAnalyzer", sys)
 
-    def analyze_document(self, document_path):
+    def analyze_document(self, document_text: str) -> dict:
         try:
-            model = self.model_loader.load_llm()
-            analysis_result = model.analyze(document_path)
-            return self.fixing_parser.invoke(analysis_result)
+            chain = self.prompt | self.llm | self.fixing_parser
+            
+            self.log.info("Meta-data analysis chain intialized")
+
+            response = chain.invoke({
+                "format_instructions": self.parser.get_format_instructions(),
+                "document_text": document_text
+            })
+
+            self.log.info("Metadata extraction successful", keys=list(response.keys()))
+
+            return response
+
         except Exception as e:
             self.log.error("Failed to analyze document", error=str(e))
             raise DocumentPortalException("Failed to analyze document", sys)
