@@ -4,7 +4,6 @@ from datetime import datetime
 import structlog
 
 
-
 class CustomLogger:
     def __init__(self, log_dir="logs"):
         self.logs_dir = os.path.join(os.getcwd(), log_dir)
