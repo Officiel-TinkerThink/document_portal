@@ -47,7 +47,7 @@ class DocumentIngestor:
             documents = []
 
             for uploaded_file in uploaded_files:
-                ext = Path(uploaded_file.filename).suffix.lower()
+                ext = Path(uploaded_file.name).suffix.lower()
                 if ext not in self.SUPPORTED_EXTENSIONS:
                     self.log.warning("Unsupported file type", filename=uploaded_file.name)
                     continue

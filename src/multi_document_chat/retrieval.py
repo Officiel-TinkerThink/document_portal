@@ -101,7 +101,7 @@ class ConversationalRAG:
             self.chain = (
                 {
                     "context": retrieve_docs,
-                    "question": itemgetter("input"),
+                    "input": itemgetter("input"),
                     "chat_history": itemgetter("chat_history") 
                 }
                 | self.qa_prompt
