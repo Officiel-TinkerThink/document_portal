@@ -17,7 +17,7 @@ load_dotenv()
 
 
 class ConversationalRAG:
-    def __init__(self, session_id: str, retriever) -> None:
+    def __init__(self, session_id: str, retriever=None) -> None:
         self.log = CustomLogger().get_logger(__name__)
         self.session_id = session_id
         self.retriever = retriever
