@@ -8,3 +8,4 @@ logs/
 test.py
 data/*/*session*
 data/
+archive/
