@@ -10,3 +10,4 @@ data/*/*session*
 data/
 archive/
 faiss_index/
+archive/
