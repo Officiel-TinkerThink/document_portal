@@ -160,6 +160,8 @@ class ChatIngestor:
                 raise DocumentPortalException("Failed to load or create FAISS index", e) from e
             
             added = fm.add_documents(chunks)
+            self.log.info("FAISS index is updated", added=added, session_id=self.session_id)
+            return vs
         except Exception as e:
             self.log.error("Failed to build retriever", error=str(e))
             raise DocumentPortalException("Failed to build retriever", e) from e

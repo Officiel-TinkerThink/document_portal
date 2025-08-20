@@ -1,72 +1,84 @@
-## Commands needs to follow
+# Document Portal
 
-## below command is for windows(CMD)
+A comprehensive document processing and analysis platform that enables users to interact with documents in multiple ways. Built with FastAPI and modern AI/ML technologies, this tool provides powerful document processing capabilities through an intuitive web interface.
 
-'''
+## Key Features
+
+### 1. Document Analysis
+- Extract and analyze metadata from documents
+- Generate summaries and key insights
+- Identify important entities and topics
+
+### 2. Document Comparison
+- Compare two documents side by side
+- Highlight differences and changes
+- Track modifications between versions
+- Generate detailed comparison reports
+
+### 3. Document Chat (RAG)
+- Chat with your documents using AI
+- Get instant answers from document content
+- Support for multiple documents in conversation
+- Context-aware responses based on document content
+- Support for multiple document upload and queries
+
+## Technology Stack
+- **Backend**: FastAPI
+- **Frontend**: HTML5, CSS3, JavaScript
+- **AI/ML**: LangChain, Embedding Models
+- **Vector Database**: FAISS
+- **Document Processing**: PyPDF, python-docx
+
+## Getting Started
+
+### Create Project Folder and Environment Setup
+
+```bash
+# Create a new project folder
 mkdir <project_folder_name>
-'''
 
-'''
+# Move into the project folder
 cd <project_folder_name>
-'''
 
-'''
+# Open the folder in VS Code
 code .
-'''
 
-## for conda env setup
+# Create a new Conda environment with Python 3.10
+conda create -p <env_name> python=3.10 -y
 
-'''
-conda create -p <env_name> python=3.10 -y   ## -p for set the current dir as env place
-'''
-
-'''
+# Activate the environment (use full path to the environment)
 conda activate <path_of_the_env>
-'''
 
-'''
+# Install dependencies from requirements.txt
 pip install -r requirements.txt
-'''
+```
 
-## git commands (this commands is for the later uses)
+### Minimum Requirements for the Project
 
-'''
-git init
-'''
+#### LLM Models
+- **Groq** (Free)
+- **OpenAI** (Paid)
+- **Gemini** (15 Days Free Access)
+- **Claude** (Paid)
+- **Hugging Face** (Free)
+- **Ollama** (Local Setup)
 
-'''
-git add .
-'''
+#### Embedding Models
+- **OpenAI**
+- **Hugging Face**
+- **Gemini**
 
-'''
-git commit -m "<write your commit message>"
-'''
+#### Vector Databases
+- **In-Memory**
+- **On-Disk**
+- **Cloud-Based**
 
-# for clone the repo
+### API Keys
 
-'''
-git clone <repo_url>
-'''
+#### GROQ API Key
+- [Get your API Key](https://console.groq.com/keys)  
+- [Groq Documentation](https://console.groq.com/docs/overview)
 
-### minimum requirement for this project
-1. LLM Model ##groq(freely), openai(paid), gemini(15 days free access), claude (paid), huggingface(freely), ollama(local setup)
-
-2. Embedding model ## openai, hf, gemini
-
-3. vector database ##inmemory  #ondisk  ##cloudbased
-
-
-## GROQ API KEY LINK
-'''
-https://console.groq.com/keys
-
-### MODEL DOCS
-https://console.groq.com/docs/overview
-'''
-
-## GOOGLE API KEY LINK
-'''
-https://aistudio.google.com/apikey
-
-https://ai.google.dev/gemini-api/docs/model
-'''
+#### Gemini API Key
+- [Get your API Key](https://aistudio.google.com/apikey)  
+- [Gemini Documentation](https://ai.google.dev/gemini-api/docs/models)
