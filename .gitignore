@@ -3,11 +3,14 @@ env
 document_portal.egg-info
 venv/
 __pycache__/
-logs/
+*logs/*
+*/logs/*
 *.pyc
 test.py
-data/*/*session*
-data/
+*data/*
+*/data/*
 archive/
 
 faiss_index/
+.github/
+archive/
