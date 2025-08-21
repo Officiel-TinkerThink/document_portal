@@ -19,7 +19,7 @@ from utils.model_loader import ModelLoader
 from logger import GLOBAL_LOGGER as log
 from exception.custom_exception import DocumentPortalException
 
-from utils.file_io import _session_id, save_uploaded_files
+from utils.file_io import generate_session_id, save_uploaded_files
 from utils.document_ops import load_documents, concat_for_analysis, concat_for_comparison
 
 SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".txt"}
@@ -47,13 +47,21 @@ class FaissManager:
     def _exists(self)-> bool:
         return (self.index_dir / "index.faiss").exists() and (self.index_dir / "index.pkl").exists()
     
+    # @staticmethod
+    # def _fingerprint(text: str, md: Dict[str, Any]) -> str:
+    #     src = md.get("source") or md.get("file_path")
+    #     rid = md.get("row_id")
+    #     if src is not None:
+    #         return f"{src}::{'' if rid is None else rid}"
+    #     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
     @staticmethod
     def _fingerprint(text: str, md: Dict[str, Any]) -> str:
         src = md.get("source") or md.get("file_path")
         rid = md.get("row_id")
-        if src is not None:
-            return f"{src}::{'' if rid is None else rid}"
-        return hashlib.sha256(text.encode("utf-8")).hexdigest()
+        # Include text content in the fingerprint to make each chunk unique
+        content_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]  # First 16 chars of hash
+        return f"{src}::{rid}::{content_hash}" if (src or rid) else content_hash
     
     def _save_meta(self):
         self.meta_path.write_text(json.dumps(self._meta, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -81,6 +89,7 @@ class FaissManager:
     def load_or_create(self, texts: Optional[List[str]] = None, 
         metadatas: Optional[List[Dict[str, Any]]] = None
     ):
+        # if we running first time, it will not go in this block
         if self._exists():
             self.vs = FAISS.load_local(
                 str(self.index_dir),
@@ -109,7 +118,7 @@ class ChatIngestor:
             self.model_loader = ModelLoader()
 
             self.use_session = use_session_dirs
-            self.session_id = session_id or _session_id()
+            self.session_id = session_id or generate_session_id()
 
             self.temp_base = Path(temp_base); self.temp_base.mkdir(parents=True, exist_ok=True)
             self.faiss_base = Path(faiss_base); self.faiss_base.mkdir(parents=True, exist_ok=True)
@@ -124,17 +133,17 @@ class ChatIngestor:
         
     def _resolve_dir(self, base: Path):
         if self.use_session:
-            d = base / self.session_id
-            d.mkdir(parents=True, exist_ok=True)
+            d = base / self.session_id #e.g. "faiss_index/abc123"
+            d.mkdir(parents=True, exist_ok=True) # creates dir if not exists
             return d
-        return base
+        return base # fallback: "faiss_index/"
 
     def _split(self, docs: List[Document], chunk_size: int, chunk_overlap: int):
         splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         chunks = splitter.split_documents(docs)
         return chunks
 
-    def built_retriver(self,
+    def built_retriever(self,
         uploaded_files: Iterable,
         *,
         chunk_size: int = 1000,
@@ -147,6 +156,9 @@ class ChatIngestor:
             if not docs:
                 raise ValueError("No documents loaded")
             chunks = self._split(docs, chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+
+
+            # FAISS manager, the core of RAG of document chat
             fm = FaissManager(self.faiss_dir, self.model_loader)
 
             texts = [c.page_content for c in chunks]
@@ -160,7 +172,7 @@ class ChatIngestor:
             
             added = fm.add_documents(chunks)
             log.info("FAISS index is updated", added=added, session_id=self.session_id)
-            return vs
+            return vs.as_retriever(search_type="similarity", search_kwargs={"k": k})
         except Exception as e:
             log.error("Failed to build retriever", error=str(e))
             raise DocumentPortalException("Failed to build retriever", e) from e
@@ -174,7 +186,7 @@ class DocHandler:
     """
     def __init__(self, data_dir: Optional[str] = None, session_id: Optional[str] = None):
         self.data_dir = data_dir or os.getenv("DATA_STORAGE_PATH", os.path.join(os.getcwd(), "data", "document_analysis"))
-        self.session_id = session_id or _session_id("session")
+        self.session_id = session_id or generate_session_id("session")
         self.session_path = os.path.join(self.data_dir, self.session_id)
         os.makedirs(self.session_path, exist_ok=True)
         log.info("DocHandler initialized", session_id=self.session_id, session_path=self.session_path)
@@ -215,7 +227,7 @@ class DocumentComparator:
     """
     def __init__(self, base_dir: str = "data/document_compare", session_id: Optional[str] = None):
         self.base_dir = Path(base_dir)
-        self.session_id = session_id or _session_id()
+        self.session_id = session_id or generate_session_id()
         self.session_path = self.base_dir / self.session_id
         self.session_path.mkdir(parents=True, exist_ok=True)
         log.info("DocumentComparator initialized", session_path=str(self.session_path))

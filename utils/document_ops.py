@@ -16,12 +16,9 @@ from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, Te
 from langchain_community.vectorstores import FAISS
 
 from utils.model_loader import ModelLoader
-from logger.custom_logger import CustomLogger
+from logger import GLOBAL_LOGGER as log
 from exception.custom_exception import DocumentPortalException
 
-log = CustomLogger().get_logger(__name__)
-
-SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".txt"}
 SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".txt"}
 
 def load_documents(paths: Iterable[Path]) -> List[Document]:
