@@ -11,6 +11,8 @@ test.py
 */data/*
 
 faiss_index/
-.github/
 archive/
+
+aws.yaml
+task_definition.json
 
